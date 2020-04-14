@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "PostShow";
+}
+
+<h2>论坛页面</h2>
+
+<p>
+    <input id="Button1" type="button" value="发布帖子" onclick="location.href='/Post/PostAdd'" />
+</p>
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>帖子标题</th>
+            <th>帖子内容</th>
+            <th>发布时间</th>
+            <th>备注</th>
+            <th>发布人</th>
+            <th>回复内容</th>
+            <th>操作</th>
+            <th>回复帖子</th>
+        </tr>
+    </thead>
+    <tbody id="td">
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        $(function () {
+            PostShow();
+        })
+
+        function PostShow() {
+            $.ajax({
+                url: 'http://localhost:62516/api/Post',
+                type: 'get',
+                dataType: 'json',
+                success: function (d) {
+                    $("#td").empty();
+                    $(d).each(function () {
+                        var line = '<tr>'
+                            + '<td>' + this.Headline   + '</td>'
+                            + '<td>' + this.Content    + '</td>'
+                            + '<td>' + this.UptTime    + '</td>'
+                            + '<td>' + this.Remark     + '</td>'
+                            + '<td>' + this.UserName + '</td>'
+                            + '<td>' + this.Reply + '</td>'
+                            + '<td><input id="Button1" type="button" value="删除帖子" onclick=Del(' + this.Id + ') /></td>'
+                            + '<td><input id="Button1" type="button" value="回复帖子" onclick=PostUpt(' + this.Id + ') /></td>'
+                            + '<td><input id="Button1" type="button" value="添加帖子" onclick=BBSAdd(' + this.Id + ') /></td>'
+                            + '</tr>'
+                        $("#td").append(line);
+                    })
+                }
+            })
+        }
+
+        $(function () {
+            $("#Replys").change(function () {
+                if ($("#Content").children("#new").length > 0) {
+                    $("#new").remove();
+                }
+                else {
+                    $("#Content").append("<input id='new' type='text' /></input>")
+                }
+            })
+        })
+
+        
+        function Del(id)
+        {
+            if (confirm('确认要删除吗？')) {
+                $.ajax({
+                    url: 'http://localhost:62516/api/Post/' + id,
+                    type: 'Delete',
+                    dataType: 'json',
+                    success: function (d) {
+                        if (d > 0) {
+                            alert('删除成功');
+                            location.href = '/Post/PostShow';
+                        }
+                        else {
+                            alert('删除失败');
+                        }
+                    }
+                })
+            }
+        } 
+        function PostUpt(Id)
+        {
+            location.href = '/Post/PostUpt?id=' + Id;
+        }
+        function BBSAdd(Id) {
+            location.href = '/Post/BBSAdd?id=' + Id;
+        }
+    </script>
+}
+

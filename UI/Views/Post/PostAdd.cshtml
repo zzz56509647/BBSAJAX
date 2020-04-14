@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "PostAdd";
+}
+
+<h2>发表帖子</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <td>帖子标题：</td>
+        <td><input id="Headline" type="text" /></td>
+    </tr>
+    <tr>
+        <td>帖子内容：</td>
+        <td><input id="Content" type="text" /></td>
+    </tr>
+    <tr>
+        <td>备注</td>
+        <td><input id="Remark" type="text" /></td>
+    </tr>
+    <tr>
+        <td>登录人</td>
+        <td><input id="UserInfoId" type="text" /></td>
+    </tr>
+    <tr>
+        <td><input id="Button1" type="button" value="发表" onclick="PostAdd()" /></td>
+    </tr>
+</table>
+
+@section scripts{
+    <script>
+        function PostAdd() {
+            var obj = {};
+            obj.Headline = $("#Headline").val();
+            obj.Content = $("#Content").val();
+            obj.Remark = $("#Remark").val();
+            obj.UserInfoId = $("#UserInfoId").val();
+
+            $.ajax({
+                url: 'http://localhost:62516/api/Post',
+                type: 'post',
+                data: obj,
+                dataType: 'json',
+                success: function (d) {
+                    if (d > 0) {
+                        alert('发表成功');
+                        location.href = '/Post/PostShow';
+                    }
+                    else {
+                        alert('发表失败');
+                    }
+                }
+            })
+        }
+    </script>
+}
+

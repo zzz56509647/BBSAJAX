@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "PostUpt";
+}
+
+<h2>发表帖子</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <td>帖子标题：</td>
+        <td><input id="Headline" type="text" /></td>
+    </tr>
+    <tr>
+        <td>帖子内容：</td>
+        <td><input id="Content" type="text" /></td>
+    </tr>
+    <tr>
+        <td>备注</td>
+        <td><input id="Remark" type="text" /></td>
+    </tr>
+    <tr>
+        <td>发布时间</td>
+        <td><input id="UptTime" type="text" /></td>
+    </tr>
+    <tr>
+        <td>登录人</td>
+        <td><input id="UserInfoId" type="text" /></td>
+    </tr>
+    <tr>
+        <td>回复</td>
+        <td><input id="Reply" type="text" /></td>
+    </tr>
+    <tr>
+        <td><input id="Button1" type="button" value="发表" onclick="Postupt()" /></td>
+    </tr>
+</table>
+
+@section scripts{
+    <script>
+        $(function () {
+            Fill();
+        })
+        var id = location.search.substr(location.search.indexOf('=') + 1);
+
+        function Fill()
+        {
+            $.ajax({
+                url: 'http://localhost:62516/api/Post/' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function (d) {
+                    $("#Headline").val(d.Headline);
+                    $("#Content").val(d.Content);
+                    $("#Remark").val(d.Remark);
+                    $("#Reply").val(d.Reply);
+                    $("#UserInfoId").val(d.UserInfoId);
+                    $("#UptTime").val(d.UptTime);
+                }
+            })
+        }
+
+        function Postupt() {
+            var obj = {};
+            obj.Id = id;
+            obj.Headline = $("#Headline").val();
+            obj.Content = $("#Content").val();
+            obj.Remark = $("#Remark").val();
+            obj.Reply = $("#Reply").val();
+            obj.UserInfoId = $("#UserInfoId").val();
+            obj.UptTime = $("#UptTime").val();
+
+            $.ajax({
+                url: 'http://localhost:62516/api/Post',
+                type: 'put',
+                data: obj,
+                dataType: 'json',
+                success: function (d) {
+                    if (d > 0) {
+                        alert('回复成功');
+                        location.href = '/Post/PostShow';
+                    }
+                    else {
+                        alert('回复失败');
+                    }
+                }
+            })
+        }
+    </script>
+}
+

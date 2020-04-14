@@ -1,0 +1,92 @@
+﻿
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <form method="post" action="">
+        专题列表：
+        <br />
+
+        <div>
+            <table>
+                <tr>
+                    <td>帖子内容：</td>
+                    <td><input id="Content" type="text" /></td>
+                </tr>
+            </table>          
+        </div>
+        <input type="checkbox" id="replay" /> 回复
+        <br />
+
+        <div id="InputsWrapper">
+            <table>
+                <tr>
+                    <td>回复：</td>
+                    <td><input id="BContent" type="text" /></td>
+                </tr>                
+            </table>
+        </div>
+        <input type="submit" name="edit" value="提交" onclick="PostAdd()">
+    </form>
+</body>
+</html>
+
+<script>
+    $(function () {
+        $("#replay").change(function () {
+            if ($("#InputsWrapper").children("#newinput").length > 0) {
+                $("#newinput").remove();
+            }
+            else {
+                $("#InputsWrapper").append("<input type='text' style='height:200px'; id='newinput'></input>");
+            }
+
+        });
+        Fill();
+    });
+
+    var id = location.search.substr(location.search.indexOf('=') + 1);
+
+    function Fill() {
+        $.ajax({
+            url: 'http://localhost:62516/api/Post/' + id,
+            type: 'get',
+            dataType: 'json',
+            success: function (d) {
+                $("#Content").val(d.Content);
+            }
+        })
+    }
+
+
+    function PostAdd() {
+        var obj = {};
+        obj.BContent = $("#BContent").val();
+        obj.PostId= id;
+
+
+        $.ajax({
+            url: 'http://localhost:62516/api/BBSAdd',
+            type: 'post',
+            data: obj,
+            dataType: 'json',
+            success: function (d) {
+                if (d > 0) {
+                    alert('发表成功');
+                    location.href = '/Post/PostShow';
+                }
+                else {
+                    alert('发表失败');
+                }
+            }
+        })
+    }
+</script>
